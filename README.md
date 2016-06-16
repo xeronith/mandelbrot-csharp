@@ -1,1 +1,1 @@
-# Mandelbrot set
+# Julia set
