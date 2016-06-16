@@ -50,7 +50,7 @@ namespace Mandelbrot
             byte* scan0 = (byte*)bitmapData.Scan0.ToPointer();
             int bytesPerPixel = 3, stride = bitmapData.Stride;
 
-            int width = bitmapData.Width, height = bitmapData.Height, maxIterations = 32;
+            int width = bitmapData.Width, height = bitmapData.Height, maxIterations = 64;
 
             for (int row = 0; row < height; row++)
             {
@@ -61,14 +61,14 @@ namespace Mandelbrot
                     var cReal = (column - centerX) * range / width;
                     var cImaginary = (row - centerY) * range / height;
 
-                    double x = 0, y = 0;
+                    double x = cReal, y = cImaginary;
 
                     int iterations = 0;
 
                     while(x * x + y * y < 4 && iterations < maxIterations)
                     {
-                        var _x = x * x - y * y + cReal;
-                        y = 2 * x * y - cImaginary;
+                        var _x = x * x - y * y;
+                        y = 2 * x * y - .8;
                         x = _x;
 
                         iterations++;
