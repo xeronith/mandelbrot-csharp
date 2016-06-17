@@ -12,6 +12,10 @@ namespace Mandelbrot
     {
         private PictureBox pictureBox;
         private int size = 500;
+        private double cr = 0, ci = -.8;
+        //private double cr = -.8, ci = .156;
+        //private double cr = 0.285, ci = 0.01;
+        //private double cr = 0.285, ci = 0;
         public Program()
         {
             Text = "Mandelbrot Set";
@@ -22,22 +26,36 @@ namespace Mandelbrot
             pictureBox = new PictureBox();
             Controls.Add(pictureBox);
 
-            SetImage(size / 2, size / 2);
+            SetImage();
 
-            pictureBox.MouseDown += delegate {
+            pictureBox.MouseDown += delegate
+            {
 
                 var saveFileDialog = new SaveFileDialog();
                 saveFileDialog.Filter = "PNG Files|*.png";
                 saveFileDialog.FileName = "Fractal";
 
-                if(saveFileDialog.ShowDialog() == DialogResult.OK)
+                if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     pictureBox.Image.Save(saveFileDialog.FileName, ImageFormat.Png);
             };
+
+            var phase = 0;
+            var timer = new Timer { Interval = 1000 / 30 };
+            timer.Tick += (s, e) =>
+            {
+                phase++;
+
+                cr += Math.Sin(phase / 100) / 500;
+                ci += Math.Cos(phase / 100) / 500;
+
+                SetImage();
+            };
+            timer.Start();
         }
 
-        private void SetImage(int x, int y)
+        private void SetImage()
         {
-            var image = GenerateFractal(x, y, size, 4.0);
+            var image = GenerateFractal(size / 2, size / 2, size, 4.0);
             ClientSize = pictureBox.Size = image.Size;
             pictureBox.Image = image;
         }
@@ -50,7 +68,7 @@ namespace Mandelbrot
             byte* scan0 = (byte*)bitmapData.Scan0.ToPointer();
             int bytesPerPixel = 3, stride = bitmapData.Stride;
 
-            int width = bitmapData.Width, height = bitmapData.Height, maxIterations = 64;
+            int width = bitmapData.Width, height = bitmapData.Height, maxIterations = 32;
 
             for (int row = 0; row < height; row++)
             {
@@ -65,10 +83,10 @@ namespace Mandelbrot
 
                     int iterations = 0;
 
-                    while(x * x + y * y < 4 && iterations < maxIterations)
+                    while (x * x + y * y < 4 && iterations < maxIterations)
                     {
-                        var _x = x * x - y * y;
-                        y = 2 * x * y - .8;
+                        var _x = x * x - y * y + cr;
+                        y = 2 * x * y + ci;
                         x = _x;
 
                         iterations++;
@@ -82,17 +100,17 @@ namespace Mandelbrot
                         int max = 255;
 
                         //R
-                        pixel[offset + 2] = (byte)(norm * max / 1);
+                        pixel[offset + 2] = (byte)(norm * max / 4);
                         //G
                         pixel[offset + 1] = (byte)(norm * max / 2);
                         //B
-                        pixel[offset + 0] = (byte)(norm * max / 4);
+                        pixel[offset + 0] = (byte)(norm * max / 1);
                     }
                     else
                     {
-                        pixel[offset + 2] = 0;
-                        pixel[offset + 1] = 0;
-                        pixel[offset + 0] = 0;
+                        pixel[offset + 2] = 64;
+                        pixel[offset + 1] = 128;
+                        pixel[offset + 0] = 255;
                     }
                 }
             }
