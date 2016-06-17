@@ -52,17 +52,17 @@ namespace Mandelbrot
                         int max = 255;
 
                         //R
-                        pixel[offset + 2] = (byte)(norm * max / 1);
+                        pixel[offset + 2] = (byte)(norm * max / 4);
                         //G
                         pixel[offset + 1] = (byte)(norm * max / 2);
                         //B
-                        pixel[offset + 0] = (byte)(norm * max / 4);
+                        pixel[offset + 0] = (byte)(norm * max / 1);
                     }
                     else
                     {
-                        pixel[offset + 2] = 0;
-                        pixel[offset + 1] = 0;
-                        pixel[offset + 0] = 0;
+                        pixel[offset + 2] = 64;
+                        pixel[offset + 1] = 128;
+                        pixel[offset + 0] = 255;
                     }
                 }
             }
