@@ -11,7 +11,7 @@ namespace Mandelbrot
     class Program : Form
     {
         private PictureBox pictureBox;
-        private int size = 500;
+        private int size = 650;
         private double cr = 0, ci = -.8;
         //private double cr = -.8, ci = .156;
         //private double cr = 0.285, ci = 0.01;
